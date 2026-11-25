@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>clipper · TikTok authorization</title>
+<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:40px auto;padding:0 16px;line-height:1.55;color:#111}</style>
+</head>
+<body>
+<h1>clipper</h1>
+<p id="msg">Completing TikTok authorization…</p>
+<script>
+// TikTok only accepts HTTPS redirect URIs. This page hands the authorization result back to the
+// clipper helper running on the owner's own computer (http://127.0.0.1:PORT), where the code is
+// exchanged for a token. The port travels inside the OAuth "state" parameter ("PORT.random").
+(function () {
+  var q = new URLSearchParams(location.search);
+  var state = q.get("state") || "";
+  var port = parseInt(state.split(".")[0], 10);
+  if (!(port > 1024 && port < 65536)) {
+    document.getElementById("msg").textContent = "Invalid authorization state. You can close this page.";
+    return;
+  }
+  location.replace("http://127.0.0.1:" + port + "/callback" + location.search);
+})();
+</script>
+</body>
+</html>
